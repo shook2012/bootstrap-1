@@ -1,7 +1,6 @@
 angular.module('ui.bootstrap.dateparser', [])
 
 .service('dateParser', ['$locale', 'orderByFilter', function($locale, orderByFilter) {
-
   this.parsers = {};
 
   var formatCodeToRegex = {
@@ -46,6 +45,30 @@ angular.module('ui.bootstrap.dateparser', [])
     },
     'EEE': {
       regex: $locale.DATETIME_FORMATS.SHORTDAY.join('|')
+    },
+    'HH': {
+      regex: '(?:0|1)[0-9]|2[0-3]',
+      apply: function(value) { this.hours = +value; }
+    },
+    'H': {
+      regex: '1?[0-9]|2[0-3]',
+      apply: function(value) { this.hours = +value; }
+    },
+    'mm': {
+      regex: '[0-5][0-9]',
+      apply: function(value) { this.minutes = +value; }
+    },
+    'm': {
+      regex: '[0-9]|[1-5][0-9]',
+      apply: function(value) { this.minutes = +value; }
+    },
+    'ss': {
+      regex: '[0-5][0-9]',
+      apply: function(value) { this.seconds = +value; }
+    },
+    's': {
+      regex: '[0-9]|[1-5][0-9]',
+      apply: function(value) { this.seconds = +value; }
     }
   };
 
@@ -93,7 +116,7 @@ angular.module('ui.bootstrap.dateparser', [])
         results = input.match(regex);
 
     if ( results && results.length ) {
-      var fields = { year: 1900, month: 0, date: 1, hours: 0 }, dt;
+      var fields = { year: 1900, month: 0, date: 1, hours: 0, minutes: 0, seconds: 0 }, dt;
 
       for( var i = 1, n = results.length; i < n; i++ ) {
         var mapper = map[i-1];
@@ -103,7 +126,7 @@ angular.module('ui.bootstrap.dateparser', [])
       }
 
       if ( isValid(fields.year, fields.month, fields.date) ) {
-        dt = new Date( fields.year, fields.month, fields.date, fields.hours);
+        dt = new Date(fields.year, fields.month, fields.date, fields.hours, fields.minutes, fields.seconds);
       }
 
       return dt;
